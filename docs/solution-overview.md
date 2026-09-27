@@ -1,41 +1,12 @@
-# Solution Overview
+# 🧠 Solution Overview: ChakraView Forensics Portal
 
-## What We Built
+### Core Mechanism
+ChakraView is an automated, graph-intelligence forensics workspace built using React and TypeScript. Instead of forcing investigators to look at flat tables, the platform ingests unstructured mock cyber fraud records (transactions, call logs, device fingerprints) and automatically maps them into a unified directed relational graph.
 
-[Describe your solution in plain language. Avoid jargon — write as if explaining to a smart colleague unfamiliar with your tech stack.]
+### Algorithmic Role Classification (Kingpin Isolation)
+ChakraView removes the guesswork from network triage. The system charts three distinct layers of evidence: Financial UPI IDs, Communication SIM arrays, and Physical Device IMEIs. By calculating node-degree centrality inside the relational graph, the engine instantly flags "Convergence Hubs"—isolating the physical machine (Kingpin) orchestrating multiple transient money mules.
 
-## How It Works
-
-[Explain the core mechanism step by step. A numbered list or simple flow works well here.]
-
-1. [Step 1: e.g., "User connects their GitHub repository via OAuth"]
-2. [Step 2: e.g., "The system ingests pipeline logs and feeds them to watsonx.ai"]
-3. [Step 3: e.g., "An anomaly score is computed and displayed on the dashboard"]
-4. [Step 4: e.g., "Alerts are sent to Slack when the score exceeds a threshold"]
-
-## Architecture Diagram
-
-> See [`architecture.md`](architecture.md) for the detailed diagram.
-
-[Optionally include a simple ASCII or Mermaid diagram here for quick reference.]
-
-```
-[User] → [Frontend: React] → [API: FastAPI] → [watsonx.ai] → [Dashboard]
-                                    ↓
-                             [PostgreSQL DB]
-```
-
-## Key Design Decisions
-
-| Decision | Rationale |
-|---|---|
-| [e.g., Used watsonx.ai for anomaly detection] | [e.g., Pre-trained models reduced time-to-value vs. building from scratch] |
-| [Decision 2] | [Rationale 2] |
-| [Decision 3] | [Rationale 3] |
-
-## IBM Technologies Used
-
-[Explain specifically HOW you used each IBM technology — not just that you used it.]
-
-- **[IBM Tech 1, e.g., watsonx.ai]:** [How it was used — e.g., "Used the `ibm/granite-13b-instruct-v2` model via the Python SDK to classify anomaly types from log text."]
-- **[IBM Tech 2]:** [How it was used]
+### Investigator Journey
+1. **Drop-Zone Ingestion**: The investigator uploads unformatted text files or CSV logs directly into the web UI dashboard.
+2. **Visual Triage Scan**: The interface dynamically charts the interlinked infrastructure map, changing node colors based on entity types (Victims, Mules, Suspect Devices).
+3. **Legal Automation**: The system automatically compiles an FIR-ready legal case brief, complete with recommended actions and pre-mapped statutory sections.

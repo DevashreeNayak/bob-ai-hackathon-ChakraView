@@ -1,49 +1,21 @@
-# Architecture
+# 🏗️ Technical Architecture & Data Flow
 
-## System Architecture
-
-[Describe the overall architecture of your system. Replace the Mermaid diagram below with your actual architecture.]
+### System Data Flow Matrix
+The application uses a modern, high-performance web architecture to handle graph relations and structural state tracking securely.
 
 ```mermaid
 graph TD
-    A[User / Browser] -->|HTTP| B[Frontend - React]
-    B -->|REST API| C[Backend - FastAPI]
-    C -->|SDK| D[watsonx.ai]
-    C -->|Query| E[PostgreSQL]
-    C -->|Publish| F[Slack Webhook]
-    D -->|Inference Result| C
+    A[Investigator UI: CSV/Text Logs Upload] -->|State Action| B[React 19 Frontend Dashboard]
+    B -->|Database Query Client| C[Supabase Portal Layer]
+    C -->|Custom SQL Constraints| D[PostgreSQL Relational Tables]
+    D -->|Topological Database Views| E[Kingpin Node Isolation Engine]
+    E -->|Structured Metadata Output| F[Automated FIR Brief Compiler]
 ```
 
-## Components
+### Component Responsibility Layout
 
-| Component | Technology | Responsibility |
-|---|---|---|
-| Frontend | [e.g., React 18] | [e.g., Dashboard UI, user interaction] |
-| Backend API | [e.g., FastAPI] | [e.g., Business logic, orchestration] |
-| AI / ML | [e.g., watsonx.ai] | [e.g., Anomaly scoring, classification] |
-| Database | [e.g., PostgreSQL] | [e.g., Storing pipeline events and scores] |
-| Notifications | [e.g., Slack API] | [e.g., Alerting on threshold breaches] |
-
-## Data Flow
-
-[Describe how data moves through your system from input to output.]
-
-1. [e.g., Pipeline logs are ingested via a webhook from GitHub Actions]
-2. [e.g., Logs are preprocessed and chunked into 512-token segments]
-3. [e.g., Each chunk is sent to the watsonx.ai inference endpoint]
-4. [e.g., Anomaly scores are stored in PostgreSQL]
-5. [e.g., The React dashboard polls the API every 30 seconds to refresh]
-
-## Security Considerations
-
-[Note any security decisions relevant to the architecture — even if basic.]
-
-- [e.g., API keys stored in environment variables, never committed to git]
-- [e.g., All API routes require a Bearer token]
-- [e.g., Database credentials rotated via IBM Secrets Manager]
-
-## Scalability Notes
-
-[Optional: how would this scale beyond the hackathon prototype?]
-
-[e.g., "The FastAPI backend is stateless and could be horizontally scaled behind a load balancer. The watsonx.ai calls are the bottleneck and would benefit from request batching."]
+| Architecture Layer | Technology Matrix | Primary Execution Responsibility |
+| :--- | :--- | :--- |
+| **User Interface Portal** | React 19 / Tailwind CSS | Handles secure asynchronous drop-zone uploads, UI dashboard layouts, and interactive graph interaction states. |
+| **Relational Graph Core** | PostgreSQL / Supabase | Executes schema integrity guards and manages referential linking queries between device IDs and UPI paths. |
+| **Development Validation** | IBM Bob CLI Ecosystem | Acts as a load-bearing SDLC partner to check type configurations, manage code consistency, and track template compliance. |
