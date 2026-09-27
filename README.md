@@ -10,7 +10,7 @@ An automated, graph-intelligence forensics workspace built to accelerate trackin
 |---|---|
 | **Team Name** | "ChakraView" |
 | **Track** | "AI" |
-| **Team Lead** | "Devashree Nayak" — "devashreenayak015@gmail.com" |
+| **Team Lead** | "Devashree Nayak" -  "devashreenayak015@gmail.com" |
 | **Members** | Solo Participant |
 
 ---

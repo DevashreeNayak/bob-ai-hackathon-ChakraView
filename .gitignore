@@ -1,96 +1,23 @@
-# =============================================================================
-# HACKATHON SUBMISSION — .gitignore
-# =============================================================================
-# IMPORTANT: Never commit secrets, credentials, or large binary files.
-
-# ── Secrets & Environment ─────────────────────────────────────────────────────
-.env
-.env.local
-.env.production
-*.key
-*.pem
-*.p12
-secrets/
-
-# ── Python ────────────────────────────────────────────────────────────────────
-__pycache__/
-*.py[cod]
-*.pyo
-.Python
-venv/
-.venv/
-env/
-pip-log.txt
-*.egg-info/
-dist/
-build/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-*.coverage
-htmlcov/
-
-# ── Node.js ───────────────────────────────────────────────────────────────────
-node_modules/
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.npm
-.yarn
-dist/
-.next/
-.nuxt/
-.output/
-.cache/
+pnpm-debug.log*
+lerna-debug.log*
 
-# ── Java / Maven / Gradle ────────────────────────────────────────────────────
-target/
-*.class
-*.jar
-*.war
-.gradle/
-build/
+node_modules
+dist
+dist-ssr
+*.local
 
-# ── Go ────────────────────────────────────────────────────────────────────────
-vendor/
-*.exe
-
-# ── Rust ──────────────────────────────────────────────────────────────────────
-target/
-Cargo.lock  # remove this line if you want to commit lock file (recommended for apps)
-
-# ── macOS ─────────────────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-.AppleDouble
-.LSOverride
-
-# ── Windows ───────────────────────────────────────────────────────────────────
-Thumbs.db
-desktop.ini
-
-# ── IDEs & Editors ────────────────────────────────────────────────────────────
-.idea/
-.vscode/
-*.swp
-*.swo
-*.sublime-project
-*.sublime-workspace
-
-# ── Large Media Files (use demo-video-link.txt instead) ───────────────────────
-demo/*.mp4
-demo/*.mov
-demo/*.avi
-demo/*.mkv
-
-# ── Docker volumes / local data ───────────────────────────────────────────────
-data/
-logs/
-*.log
-
-# ── Jupyter Notebooks (optional: remove if you want to commit notebooks) ──────
-# .ipynb_checkpoints/
-
-# ── Terraform ─────────────────────────────────────────────────────────────────
-.terraform/
-*.tfstate
-*.tfstate.backup
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
