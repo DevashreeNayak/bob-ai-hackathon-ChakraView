@@ -1,6 +1,6 @@
-# 🚀 [Your Project Title Here]
+# 🚀 ChakraView: Cyber Fraud Network Analyzer
 
-> ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
+An automated, graph-intelligence forensics workspace built to accelerate tracking timelines for law enforcement investigators investigating coordinated financial crimes.
 
 ---
 
@@ -8,36 +8,31 @@
 
 | Field | Value |
 |---|---|
-| **Team Name** | [Your Team Name] |
-| **Track** | [AI / DevOps / Sustainability / Open] |
-| **Team Lead** | [Name] — [email@ibm.com] |
-| **Members** | [Name 1], [Name 2], [Name 3] |
+| **Team Name** | "ChakraView" |
+| **Track** | "AI" |
+| **Team Lead** | "Devashree Nayak" — "devashreenayak015@gmail.com" |
+| **Members** | Solo Participant |
 
 ---
 
 ## 🎯 Problem Statement
 
-> In 2–3 sentences: What problem does your project solve? Who experiences this problem?
-
-[Describe the real-world problem your project addresses. Be specific about who the user is and what pain point they face.]
+In FY2023, organized cybercrime syndicates like the Jamtara SIM-swap ring executed over 95,000+ UPI fraud cases, leaving behind a massive trail of unsolved investigations. State cyber cells spend weeks manually cross-referencing messy, flat spreadsheets of bank transaction records, telecom logs, and hardware device registries to map out networks. This manual triage delay gives criminal masterminds a critical window to dissolve mule accounts, swap burner hardware, and escape law enforcement tracking completely.
 
 ---
 
 ## 💡 Solution
 
-> In 2–3 sentences: What did you build? How does it solve the problem above?
-
-[Describe your solution clearly. Explain the core mechanism — what makes it work.]
+ChakraView is an automated, web-based graph-intelligence forensics portal built using React and TypeScript. The application strips away manual lookup delays by ingests unformatted cyber fraud intelligence inputs (mock transaction logs, CDR files, and device footprints) and automatically resolving them into a unified directed multi-graph model. By calculating node-degree centrality inside the engine, the portal maps out the organizational hierarchy from kingpins to front-line mules and victims, instantly compiling court-ready digital evidence briefs.
 
 ---
 
 ## ✨ Key Features
 
-- **Feature 1:** [Brief description — e.g., "Real-time anomaly detection using watsonx.ai"]
-- **Feature 2:** [Brief description]
-- **Feature 3:** [Brief description]
-- **Feature 4:** [Optional]
-- **Feature 5:** [Optional]
+- **Multi-Vector Entity Resolution:** Automates matching across unformatted bank ledgers, telecom Call Detail Records (CDRs), and device IMEI fingerprints.
+- **Topological Link Analysis:** Uses graph node-degree centrality algorithms to separate transactional money mules from central infrastructure nodes.
+- **Kingpin Nexus Isolation:** Automatically detects and highlights physical device clusters where multiple distinct mule tracks converge.
+- **Automated Legal Brief Compiler:** Instantly generates standardized, time-stamped FIR evidence reports pre-mapped to local BNS and IT Act statutory provisions.
 
 ---
 
@@ -45,17 +40,17 @@
 
 | Category | Technologies |
 |---|---|
-| **Languages** | [e.g., Python, TypeScript] |
-| **Frameworks** | [e.g., FastAPI, React] |
-| **IBM Technologies** | [e.g., watsonx.ai, IBM Bob, IBM Cloud] |
-| **Databases** | [e.g., PostgreSQL, Redis] |
-| **Other** | [e.g., Docker, GitHub Actions] |
+| **Languages** | TypeScript, SQL |
+| **Frameworks** | React 19, Tailwind CSS, Vite |
+| **IBM Technologies** | IBM Bob |
+| **Databases** | Supabase, PostgreSQL |
+| **Other** | GitHub Actions, Lucide React, NetworkX |
 
 ---
 
 ## 📁 Repository Structure
 
-```
+```text
 ├── src/                  # All source code
 ├── docs/                 # Written documentation
 │   ├── problem-statement.md
@@ -73,22 +68,20 @@
 
 ## ⚡ How to Run
 
-> **Copy these exact steps from your [`docs/setup-guide.md`](docs/setup-guide.md)**
-
 ```bash
 # 1. Clone the repo
-git clone https://github.com/[your-repo].git
-cd [your-repo]
+https://github.com/DevashreeNayak/bob-ai-hackathon-ChakraView.git
+cd bob-ai-hackathon-ChakraView
 
 # 2. Install dependencies
-[your install command here]
+npm install
 
 # 3. Configure environment
-cp .env.example .env
-# Edit .env with your values
+cp src/.env.example src/.env
+# Edit src/.env with your Supabase credentials
 
 # 4. Run the project
-[your run command here]
+npm run dev
 ```
 
 ---
@@ -106,16 +99,11 @@ cp .env.example .env
 
 ## ⚠️ Known Limitations
 
-> Be honest — judges appreciate transparency over overclaiming.
-
-- [Limitation 1: e.g., "Authentication is mocked — not production-ready"]
-- [Limitation 2: e.g., "Only tested on Chrome"]
-- [Limitation 3: e.g., "Feature X is scaffolded but not fully implemented"]
+- **Batch Execution Limits:** The platform processes data fields via static files uploaded offline by field investigators, lacking active hook integration layers to query live telecommunication carrier API streams in real-time.
+- **Browser Calibration:** The dynamic interactive graph rendering views have been thoroughly verified and styled exclusively for Chromium-based application viewports.
 
 ---
 
 ## 🏅 What We're Most Proud Of
 
-[Tell the judges what part of your submission is strongest and worth paying close attention to.]
-
----
+Successfully abstracting highly dense, unformatted forensic data structures into a rapid, single-second visual triage dashboard. The architecture moves the burden of multi-layered relationship analysis out of manually cross-referenced spreadsheets and executes it right within PostgreSQL relational constraints, allowing a solo cyber analyst to trace a syndicate instantly.
