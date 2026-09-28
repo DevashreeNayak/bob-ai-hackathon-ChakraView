@@ -355,20 +355,11 @@ function App() {
             {view === 'graph' && (
               <>
                 <div className="lg:col-span-8">
-                  <div className="flex h-[calc(100vh-16rem)] min-h-[400px] flex-col gap-3">
-                    <div className="flex-1 rounded-2xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-slate-100 dark:border-slate-800/70 dark:from-slate-900/50 dark:to-slate-950/50" style={{ minHeight: 0 }}>
-                      {entities.length > 0 ? (
-                        <NetworkGraph entities={entities} relationships={relationships} kingpinId={kingpinId} />
-                      ) : (
-                        <EmptyState text="Run an analysis to see the network graph." />
-                      )}
-                    </div>
-                    {entities.length > 0 && (
-                      <CrossCasePanel
-                        entities={entities}
-                        currentCaseId={currentCaseId}
-                        onOpenCase={openCaseById}
-                      />
+                  <div className="h-[calc(100vh-16rem)] min-h-[400px] rounded-2xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-slate-100 dark:border-slate-800/70 dark:from-slate-900/50 dark:to-slate-950/50">
+                    {entities.length > 0 ? (
+                      <NetworkGraph entities={entities} relationships={relationships} kingpinId={kingpinId} />
+                    ) : (
+                      <EmptyState text="Run an analysis to see the network graph." />
                     )}
                   </div>
                 </div>
@@ -377,6 +368,15 @@ function App() {
                     <EntityPanel entities={entities} relationships={relationships} kingpinId={kingpinId} />
                   </div>
                 </div>
+                {entities.length > 0 && (
+                  <div className="lg:col-span-12">
+                    <CrossCasePanel
+                      entities={entities}
+                      currentCaseId={currentCaseId}
+                      onOpenCase={openCaseById}
+                    />
+                  </div>
+                )}
               </>
             )}
 

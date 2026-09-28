@@ -22,17 +22,19 @@ export function CrossCasePanel({ entities, currentCaseId, onOpenCase }: Props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (entities.length === 0) return;
+    // Only run when we have a saved case ID — avoids matching against itself
+    // when currentCaseId is undefined (analysis not yet persisted)
+    if (entities.length === 0 || !currentCaseId) return;
     let cancelled = false;
 
     async function detect() {
       setLoading(true);
       try {
-        // Pull all other cases
+        // Pull all other cases, explicitly excluding the current one by its real UUID
         const { data } = await supabase
           .from('chakraview_cases')
           .select('id, case_number, title, risk_level, entities')
-          .neq('id', currentCaseId ?? '');
+          .neq('id', currentCaseId);
 
         if (cancelled || !data) return;
 
