@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Scale, Gavel, ShieldAlert, CheckCircle2, Copy, Check, Download } from 'lucide-react';
+import { Scale, Gavel, ShieldAlert, CheckCircle2, Copy, Check, Download, FileDown } from 'lucide-react';
 import type { CaseBrief } from '@/lib/supabase';
+import { downloadBriefPDF } from '@/lib/pdfExport';
 
 interface Props {
   brief: CaseBrief;
@@ -42,6 +43,10 @@ export function BriefPanel({ brief, caseNumber, title }: Props) {
     URL.revokeObjectURL(url);
   }
 
+  function downloadPDF() {
+    downloadBriefPDF(brief, caseNumber, title);
+  }
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-2">
@@ -62,7 +67,14 @@ export function BriefPanel({ brief, caseNumber, title }: Props) {
             className="flex items-center gap-1.5 rounded-lg border border-slate-300/60 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 dark:border-slate-600/60 dark:bg-slate-800 dark:text-slate-300"
           >
             <Download className="h-3.5 w-3.5" />
-            Download
+            .txt
+          </button>
+          <button
+            onClick={downloadPDF}
+            className="flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-100 dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-300 dark:hover:bg-red-900/40"
+          >
+            <FileDown className="h-3.5 w-3.5" />
+            PDF
           </button>
         </div>
       </div>

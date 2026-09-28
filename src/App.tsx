@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Shield, Sun, Moon, Activity, Database, Cpu, Radar, FileSearch,
-  Loader2, AlertCircle, CheckCircle2, ChevronRight, Zap, Target, Layers,
+  Shield, Sun, Moon, Database, Cpu, Radar, FileSearch,
+  Loader2, AlertCircle, CheckCircle2, ChevronRight, Layers, Clock,
+  Activity, Zap, Target,
 } from 'lucide-react';
 import { supabase, type CaseRecord, type CaseInsert, type Entity, type Relationship, type CaseBrief } from '@/lib/supabase';
 import { extractIntelligence, generateBrief, detectKingpin } from '@/lib/engine';
 import { callBob } from '@/lib/bob';
 import { useTheme } from '@/lib/useTheme';
+import { extractTimeline, type TimelineEvent } from '@/lib/timeline';
 import { IngestPanel } from '@/components/IngestPanel';
 import { NetworkGraph } from '@/components/NetworkGraph';
 import { EntityPanel } from '@/components/EntityPanel';
 import { BriefPanel } from '@/components/BriefPanel';
 import { CaseArchive } from '@/components/CaseArchive';
+import { TimelinePanel } from '@/components/TimelinePanel';
+import { CrossCasePanel } from '@/components/CrossCasePanel';
 
-type View = 'ingest' | 'graph' | 'entities' | 'brief' | 'archive';
+type View = 'ingest' | 'graph' | 'entities' | 'brief' | 'timeline' | 'archive';
 type Phase = 'idle' | 'parsing' | 'resolving' | 'compiling' | 'done';
 
 const RISK_STYLES: Record<string, string> = {
@@ -38,6 +42,7 @@ function App() {
   const [summary, setSummary] = useState('');
   const [brief, setBrief] = useState<CaseBrief | null>(null);
   const [kingpinId, setKingpinId] = useState<string | undefined>();
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
 
   const [cases, setCases] = useState<CaseRecord[]>([]);
   const [casesLoading, setCasesLoading] = useState(true);
@@ -103,6 +108,7 @@ function App() {
       setPattern(extracted.pattern);
       setRiskLevel(extracted.riskLevel);
       setSummary(extracted.summary);
+      setTimelineEvents(extractTimeline(text));
 
       // Phase 2: Identity resolution & pattern matching
       setPhase('resolving');
@@ -164,10 +170,16 @@ function App() {
     setBrief(c.brief ?? null);
     setCurrentCaseId(c.id);
     setCurrentCaseNumber(c.case_number);
+    setTimelineEvents(extractTimeline(c.source_text));
     const kp = detectKingpin(c.entities ?? [], c.relationships ?? []);
     setKingpinId(kp?.id);
     setPhase('done');
     setView('graph');
+  }
+
+  function openCaseById(id: string) {
+    const c = cases.find((x) => x.id === id);
+    if (c) loadCase(c);
   }
 
   function reset() {
@@ -179,6 +191,7 @@ function App() {
     setSummary('');
     setBrief(null);
     setKingpinId(undefined);
+    setTimelineEvents([]);
     setCurrentCaseId(undefined);
     setCurrentCaseNumber('');
     setBobSource(null);
@@ -190,6 +203,7 @@ function App() {
     { key: 'ingest', label: 'Ingest', icon: Cpu },
     { key: 'graph', label: 'Network', icon: Radar },
     { key: 'entities', label: 'Entities', icon: Layers },
+    { key: 'timeline', label: 'Timeline', icon: Clock },
     { key: 'brief', label: 'Brief', icon: FileSearch },
     { key: 'archive', label: 'Archive', icon: Database },
   ];
@@ -341,11 +355,20 @@ function App() {
             {view === 'graph' && (
               <>
                 <div className="lg:col-span-8">
-                  <div className="h-[calc(100vh-16rem)] min-h-[400px] rounded-2xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-slate-100 dark:border-slate-800/70 dark:from-slate-900/50 dark:to-slate-950/50">
-                    {entities.length > 0 ? (
-                      <NetworkGraph entities={entities} relationships={relationships} kingpinId={kingpinId} />
-                    ) : (
-                      <EmptyState text="Run an analysis to see the network graph." />
+                  <div className="flex h-[calc(100vh-16rem)] min-h-[400px] flex-col gap-3">
+                    <div className="flex-1 rounded-2xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-slate-100 dark:border-slate-800/70 dark:from-slate-900/50 dark:to-slate-950/50" style={{ minHeight: 0 }}>
+                      {entities.length > 0 ? (
+                        <NetworkGraph entities={entities} relationships={relationships} kingpinId={kingpinId} />
+                      ) : (
+                        <EmptyState text="Run an analysis to see the network graph." />
+                      )}
+                    </div>
+                    {entities.length > 0 && (
+                      <CrossCasePanel
+                        entities={entities}
+                        currentCaseId={currentCaseId}
+                        onOpenCase={openCaseById}
+                      />
                     )}
                   </div>
                 </div>
@@ -361,6 +384,20 @@ function App() {
               <div className="lg:col-span-12">
                 <div className="h-[calc(100vh-12rem)] min-h-[400px] rounded-2xl border border-slate-200/70 bg-white p-5 dark:border-slate-800/70 dark:bg-slate-900/50">
                   <EntityPanel entities={entities} relationships={relationships} kingpinId={kingpinId} />
+                </div>
+              </div>
+            )}
+
+            {view === 'timeline' && (
+              <div className="lg:col-span-10 lg:col-start-2">
+                <div className="h-[calc(100vh-12rem)] min-h-[400px] rounded-2xl border border-slate-200/70 bg-white p-5 dark:border-slate-800/70 dark:bg-slate-900/50">
+                  <TimelinePanel
+                    events={timelineEvents}
+                    onHighlightEntity={(label) => {
+                      // Jump to entities view and the label is visible there
+                      setView('entities');
+                    }}
+                  />
                 </div>
               </div>
             )}
@@ -385,6 +422,7 @@ function App() {
                     loading={casesLoading}
                     onSelect={loadCase}
                     onDeleted={loadCases}
+                    onUpdated={loadCases}
                     currentId={currentCaseId}
                   />
                 </div>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Entity, Relationship } from '@/lib/supabase';
 import { buildGraph, getEdgeColor, getNodeTypeStyle, simulate, type GraphNode } from '@/lib/graph';
-import { ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { ZoomIn, ZoomOut, Maximize2, Filter } from 'lucide-react';
 
 interface Props {
   entities: Entity[];
@@ -27,6 +27,9 @@ const EDGE_LABELS: Record<Relationship['kind'], string> = {
   controls: 'controls',
 };
 
+const ALL_TYPES: Entity['type'][] = ['person', 'phone', 'account', 'device', 'upi', 'location'];
+const ALL_ROLES = ['kingpin', 'mule', 'victim', 'suspect'];
+
 export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +39,32 @@ export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
   const [zoom, setZoom] = useState(1);
   const [dims, setDims] = useState({ w: 800, h: 560 });
   const [dragging, setDragging] = useState<string | null>(null);
+  const [showFilter, setShowFilter] = useState(false);
+  const [hiddenTypes, setHiddenTypes] = useState<Set<Entity['type']>>(new Set());
+  const [hiddenRoles, setHiddenRoles] = useState<Set<string>>(new Set());
   const dragOffset = useRef({ x: 0, y: 0 });
+
+  function toggleType(t: Entity['type']) {
+    setHiddenTypes((prev) => {
+      const next = new Set(prev);
+      next.has(t) ? next.delete(t) : next.add(t);
+      return next;
+    });
+  }
+
+  function toggleRole(r: string) {
+    setHiddenRoles((prev) => {
+      const next = new Set(prev);
+      next.has(r) ? next.delete(r) : next.add(r);
+      return next;
+    });
+  }
+
+  function isNodeVisible(n: GraphNode) {
+    if (hiddenTypes.has(n.type)) return false;
+    if (n.role && hiddenRoles.has(n.role)) return false;
+    return true;
+  }
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -103,6 +131,7 @@ export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
     };
   }, [dragging, zoom]);
 
+  const visibleNodeIds = new Set(nodes.filter(isNodeVisible).map((n) => n.id));
   const nodeMap = new Map(nodes.map((n) => [n.id, n]));
   const maxDegree = edges.reduce((acc, e) => {
     acc[e.source] = (acc[e.source] ?? 0) + 1;
@@ -110,10 +139,23 @@ export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
     return acc;
   }, {} as Record<string, number>);
 
+  const activeFilters = hiddenTypes.size + hiddenRoles.size;
+
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden rounded-2xl">
       {/* Controls */}
       <div className="absolute right-3 top-3 z-10 flex gap-1.5">
+        <button
+          onClick={() => setShowFilter((v) => !v)}
+          className={`grid h-9 w-9 place-items-center rounded-lg border backdrop-blur transition ${
+            showFilter || activeFilters > 0
+              ? 'border-sky-400 bg-sky-500 text-white'
+              : 'border-slate-300/40 bg-white/80 text-slate-700 hover:bg-white dark:border-slate-600/40 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-700'
+          }`}
+          title="Filter nodes"
+        >
+          <Filter className="h-4 w-4" />
+        </button>
         <button
           onClick={() => setZoom((z) => Math.min(2, z + 0.15))}
           className="grid h-9 w-9 place-items-center rounded-lg border border-slate-300/40 bg-white/80 text-slate-700 backdrop-blur transition hover:bg-white dark:border-slate-600/40 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-700"
@@ -133,6 +175,62 @@ export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
           <Maximize2 className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Filter panel */}
+      {showFilter && (
+        <div className="absolute right-3 top-14 z-20 w-52 rounded-xl border border-slate-300/40 bg-white/95 p-3 shadow-lg backdrop-blur dark:border-slate-600/40 dark:bg-slate-900/95">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Entity Types</p>
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {ALL_TYPES.map((t) => {
+              const s = getNodeTypeStyle(t);
+              const hidden = hiddenTypes.has(t);
+              return (
+                <button
+                  key={t}
+                  onClick={() => toggleType(t)}
+                  className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold transition ${
+                    hidden
+                      ? 'border-slate-200 bg-slate-100 text-slate-400 line-through dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500'
+                      : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                  }`}
+                >
+                  <span className="h-2 w-2 rounded-full" style={{ background: hidden ? '#94a3b8' : s.bg }} />
+                  {TYPE_LABELS[t]}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Person Roles</p>
+          <div className="flex flex-wrap gap-1.5 mb-2">
+            {ALL_ROLES.map((r) => {
+              const hidden = hiddenRoles.has(r);
+              const color = r === 'kingpin' ? '#fbbf24' : r === 'mule' ? '#f87171' : r === 'victim' ? '#4ade80' : '#94a3b8';
+              return (
+                <button
+                  key={r}
+                  onClick={() => toggleRole(r)}
+                  className={`flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase transition ${
+                    hidden
+                      ? 'border-slate-200 bg-slate-100 text-slate-400 line-through dark:border-slate-700 dark:bg-slate-800'
+                      : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                  }`}
+                >
+                  <span className="h-2 w-2 rounded-full" style={{ background: hidden ? '#94a3b8' : color }} />
+                  {r}
+                </button>
+              );
+            })}
+          </div>
+          {activeFilters > 0 && (
+            <button
+              onClick={() => { setHiddenTypes(new Set()); setHiddenRoles(new Set()); }}
+              className="mt-1 w-full rounded-lg bg-slate-100 py-1 text-[10px] font-semibold text-slate-500 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+            >
+              Clear filters ({activeFilters})
+            </button>
+          )}
+        </div>
+      )}
 
       <svg
         ref={svgRef}
@@ -164,6 +262,9 @@ export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
             const a = nodeMap.get(e.source);
             const b = nodeMap.get(e.target);
             if (!a || !b) return null;
+            const srcVisible = visibleNodeIds.has(e.source);
+            const tgtVisible = visibleNodeIds.has(e.target);
+            if (!srcVisible || !tgtVisible) return null;
             const isHovered = hovered === e.source || hovered === e.target;
             return (
               <g key={i}>
@@ -193,6 +294,7 @@ export function NetworkGraph({ entities, relationships, kingpinId }: Props) {
 
           {/* Nodes */}
           {nodes.map((n) => {
+            if (!visibleNodeIds.has(n.id)) return null;
             const style = getNodeTypeStyle(n.type);
             const degree = maxDegree[n.id] ?? 0;
             const radius = n.type === 'person' ? 18 + Math.min(degree * 2, 10) : 14;
