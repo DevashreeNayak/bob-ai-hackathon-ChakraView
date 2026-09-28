@@ -1,0 +1,16 @@
+#1 — Event Timeline (src/components/TimelinePanel.tsx) + (src/lib/timeline.ts)
+New "Timeline" nav tab. The extractTimeline() function parses raw intelligence text for dates, transactions, CDR calls, SIM swaps, and device events, sorts them chronologically, and renders them in a vertical spine layout with colour-coded event types (amber=transaction, green=call, red=SIM swap, violet=device). Entity tags on each event are clickable and jump to the Entities view.
+
+#2 — PDF Export (src/lib/pdfExport.ts) + (src/components/BriefPanel.tsx)
+The Brief panel now has two download buttons: .txt (original) and a new red PDF button. The downloadBriefPDF() function generates a fully formatted A4 PDF using jsPDF — with a sky-blue header bar, case metadata block, confidence/kingpin badges, numbered sections, statute pill badges, numbered action items, and a page-numbered footer on every page.
+
+#3 — Case Status Workflow + Investigator Notes (src/components/CaseArchive.tsx)
+Every case card in the Archive now has an inline status dropdown (active → review → closed) that saves to Supabase on change. A purple 📝 Notes button expands a freeform textarea per case with a Save notes button that persists to Supabase.
+
+#4 — Graph Node Filter (src/components/NetworkGraph.tsx)
+A new Filter button (top-right of the graph) opens a floating panel to toggle visibility by entity type (Person, Phone, Device, etc.) and by person role (kingpin, mule, victim, suspect). Hidden nodes and their edges are suppressed from the SVG. An active filter count badge shows on the button, and a "Clear filters" button resets everything.
+
+#5 — Cross-Case Entity Match (src/components/CrossCasePanel.tsx)
+Shown below the network graph whenever entities are loaded. Queries all other saved cases from Supabase, compares phones/devices/UPI/accounts against the current case, and surfaces any matches as amber warning banners with case number, risk level, and a jump-to-case button. Only high-signal forensic identifiers are matched (not person names) to avoid false positives.
+
+
